@@ -264,7 +264,7 @@ void master(Input *input, int world_size)
             MPI_Status status;
             output_fileStruct helperOutput;
             MPI_Recv(&helperOutput, sizeof(output_fileStruct), MPI_BYTE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-            outputFile[helperOutput.lineNum].data = input->seq2[outputFile->lineNum];
+            outputFile[helperOutput.lineNum].data = input->seq2[helperOutput.lineNum];
             outputFile[helperOutput.lineNum].mutant = helperOutput.mutant;
             recivedWorks++;
             if(sentWork < input->seq2Count)
