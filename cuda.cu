@@ -76,7 +76,7 @@ __device__ int calculateScore(char *seq1, char *seq2, int w[], int offset)
     int spacesCount = 0;
     for (int i = 0; i < strlenDevice(seq2); i++)
     {
-        switch (getSign(seq1[i], seq2[i + offset]))
+        switch (getSign(seq1[i + offset], seq2[i]))
         {
         case '*':
             starsCount++;
@@ -125,13 +125,12 @@ __global__ void BestMutantANDOffset(nkTuple* nk, char* seq1, char* seq2, int* w,
         bestOffset = 0;
         bestScore = INT_MIN;
         int len =  strlenDevice(seq2);
-        /*
+        
         seq2Shared = (char*)malloc(len-1);
         
         seq2Shared[strlenDevice(seq2) - 2] = '\0';
                 
         getNKFromNumber(&myTuple,blockIdx.x, strlenDevice(seq2));
-        *nk = myTuple;
         int counter = 0;
 
         for (int j = 0; j < strlenDevice(seq2); j++) // generate mutant
@@ -141,9 +140,9 @@ __global__ void BestMutantANDOffset(nkTuple* nk, char* seq1, char* seq2, int* w,
                 seq2Shared[counter] = seq2[j];
                 counter++;
             }
-        }*/
+        }
     }
-/*
+
     __syncthreads();
     int score = calculateScore(seq1, seq2Shared, w, threadIdx.x);
     atomicMax(&bestScore, score);
@@ -151,7 +150,7 @@ __global__ void BestMutantANDOffset(nkTuple* nk, char* seq1, char* seq2, int* w,
 
     if(bestScore == score)
     {
-        *offset = threadIdx.x;
+        bestOffset = threadIdx.x;
     }
     __syncthreads();
     if(threadIdx.x == 0)
@@ -167,10 +166,8 @@ __global__ void BestMutantANDOffset(nkTuple* nk, char* seq1, char* seq2, int* w,
             nk->k = myTuple.k;
             *offset = bestOffset;
         }
-    }
-    */
     free(seq2Shared);
-    
+    }
 }
 
 extern "C" int* getBestMutantCuda(char *seq1, char *seq2, int w[])
